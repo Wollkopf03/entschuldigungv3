@@ -30,7 +30,7 @@ export async function validateReview(props: Props) {
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ ...props.login, ...props.time, ...props.reason })
 		};
-		return fetch("https://api.mcs-rbg.de/entschuldigungen-test/", requestOptions)
+		return fetch("https://api.mcs-rbg.de/entschuldigungen/", requestOptions)
 			.then(response => response.json()).then(data => {
 				if ("error" in data)
 					return data.error;
