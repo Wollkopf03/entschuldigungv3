@@ -5,6 +5,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { RootState } from './app/store';
 import { nextStep, prevStep, setError } from "./AppSlice";
+import Feedback from './features/feedback/Feedback';
+import { feedbackStateType } from './features/feedback/FeedbackSlice';
+import { validateFeedback } from './features/feedback/validateFeedback';
 import Login from './features/login/Login';
 import { loginStateType } from './features/login/LoginSlice';
 import { validateLogin } from './features/login/validateLogin';
@@ -26,7 +29,8 @@ type Props = {
 	prevStep: () => void,
 	login: loginStateType,
 	time: timeStateType,
-	reason: reasonStateType
+	reason: reasonStateType,
+	feedback: feedbackStateType
 }
 
 class App extends Component<Props> {
@@ -43,9 +47,18 @@ class App extends Component<Props> {
 				return <Reason />
 			case 3:
 				return <Review />
+			case 4:
+				return <Success />
+			case 5:
+				return <Feedback />
 			default:
-				throw new Error("Unknown step");
+				return <Typography component="h6" variant="h6" align="center">
+					Vielen Dank für dein Feedback
+				</Typography>
 		}
+	}
+	async undefined() {
+		return undefined;
 	}
 
 	async nextStep() {
@@ -63,9 +76,16 @@ class App extends Component<Props> {
 			case 3:
 				error = validateReview({ login: this.props.login, time: this.props.time, reason: this.props.reason });
 				break;
+			case 4:
+				error = this.undefined();
+				break;
+			case 5:
+				error = validateFeedback({ feedback: this.props.feedback, login: this.props.login });
+				break;
 			default:
 				throw new Error("Unknown step");
 		}
+		console.log(error)
 		this.props.setError(await error);
 		if (await error === undefined)
 			this.props.nextStep()
@@ -87,32 +107,46 @@ class App extends Component<Props> {
 							))}
 						</Stepper>
 						<React.Fragment>
-							{this.props.step === this.steps.length ? (
-								<Success />
-							) : (
-								<>
-									{this.getStepContent()}
-									<Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-										{this.props.error === undefined ?
-											<React.Fragment>
-												{this.props.step !== 0 &&
-													<Button onClick={() => this.props.prevStep()} sx={{ mt: 3, ml: 1 }}>
-														Zurück
-													</Button>
-												}
+							{this.getStepContent()}
+							<Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+								{this.props.error === undefined && this.props.step < 4 ?
+									<React.Fragment>
+										{this.props.step !== 0 &&
+											<Button onClick={() => this.props.prevStep()} sx={{ mt: 3, ml: 1 }}>
+												Zurück
+											</Button>
+										}
+										<Button
+											variant="contained"
+											onClick={() => this.nextStep()}
+											sx={{ mt: 3, ml: 1 }}
+										>
+											{this.props.step === this.steps.length - 1 ? "Abschicken" : "Weiter"}
+										</Button>
+									</React.Fragment>
+									: this.props.error === undefined && this.props.step === 4 ?
+										<Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+											<Button
+												variant="contained"
+												onClick={() => this.nextStep()}
+												sx={{ mt: 3, ml: 1 }}
+											>
+												Feedback senden (optional)
+											</Button>
+										</Box>
+										: this.props.error === undefined && this.props.step === 5 ?
+											<Box sx={{ display: "flex", justifyContent: "flex-end" }}>
 												<Button
 													variant="contained"
 													onClick={() => this.nextStep()}
 													sx={{ mt: 3, ml: 1 }}
 												>
-													{this.props.step === this.steps.length - 1 ? "Abschicken" : "Weiter"}
+													Feedback senden (optional)
 												</Button>
-											</React.Fragment> :
+											</Box> : this.props.error !== undefined &&
 											<Alert sx={{ mt: 3, width: "100%" }} severity="error">{this.props.error}</Alert>
-										}
-									</Box>
-								</>
-							)}
+								}
+							</Box>
 						</React.Fragment>
 					</Paper>
 				</Container>
@@ -144,7 +178,7 @@ class App extends Component<Props> {
 						</Typography>
 					</Grid>
 				</AppBar>
-			</ThemeProvider>
+			</ThemeProvider >
 		)
 	}
 }
@@ -154,7 +188,8 @@ const mapStateToProps = (state: RootState) => ({
 	error: state.app.error,
 	login: state.login,
 	time: state.time,
-	reason: state.reason
+	reason: state.reason,
+	feedback: state.feedback
 })
 
 const mapDispatchToProps = {
