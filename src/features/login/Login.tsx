@@ -1,9 +1,9 @@
-import { FormControl, Grid, InputLabel, MenuItem, OutlinedInput, Select, TextField, Typography } from '@mui/material';
+import { Button, Checkbox, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, OutlinedInput, Select, TextField, Typography } from '@mui/material';
 import { ActionCreatorWithPayload } from '@reduxjs/toolkit';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { RootState } from '../../app/store';
-import { setEmail, setGebDat, setKlasse, setNachname, setPasswort, setVorname } from "./LoginSlice";
+import { setEmail, setGebDat, setKlasse, setNachname, setPasswort, setVorname, setSaveData } from "./LoginSlice";
 
 type Props = {
 	vorname: string,
@@ -12,17 +12,30 @@ type Props = {
 	geb_dat: string,
 	passwort: string,
 	email: string,
+	saveData: boolean,
 	setEmail: ActionCreatorWithPayload<string, string>,
 	setGebDat: ActionCreatorWithPayload<string, string>,
 	setKlasse: ActionCreatorWithPayload<string, string>,
 	setNachname: ActionCreatorWithPayload<string, string>,
 	setPasswort: ActionCreatorWithPayload<string, string>,
-	setVorname: ActionCreatorWithPayload<string, string>
+	setVorname: ActionCreatorWithPayload<string, string>,
+	setSaveData: ActionCreatorWithPayload<boolean, string>
 }
 
 export class Login extends Component<Props>  {
 
 	render() {
+		const user = localStorage.getItem("mcs_entschuldigung_user");
+		var loggedIn: boolean = false;
+		if (user) {
+			const userJSON = JSON.parse(user);
+			this.props.setVorname(userJSON.vorname);
+			this.props.setNachname(userJSON.nachname);
+			this.props.setEmail(userJSON.email);
+			this.props.setKlasse(userJSON.klasse);
+			this.props.setGebDat(userJSON.geb_dat);
+			loggedIn = true;
+		}
 		return (
 			<React.Fragment >
 				<Typography variant="h6" gutterBottom>
@@ -119,6 +132,31 @@ export class Login extends Component<Props>  {
 							/>
 						</FormControl>
 					</Grid>
+					<Grid item xs={12} sm={12}>
+						{loggedIn ?
+							<Button
+								variant="contained"
+								onClick={() => {
+									localStorage.clear();
+									this.props.setSaveData(false);
+									this.props.setVorname("");
+									this.props.setNachname("");
+									this.props.setEmail("");
+									this.props.setKlasse("");
+									this.props.setGebDat("");
+								}} sx={{ mt: 3, ml: 1 }}>
+								Daten löschen
+							</Button>
+							:
+							<FormControlLabel control={
+								<Checkbox
+									id="saveData"
+									name="saveData"
+									onChange={(e, checked) => this.props.setSaveData(checked)}
+									value={this.props.saveData ? "checked" : "unchecked"}
+								/>} label="Daten für die Zukunft speichern" />
+						}
+					</Grid>
 				</Grid>
 			</React.Fragment >
 		);
@@ -131,9 +169,10 @@ const mapStateToProps = (state: RootState) => ({
 	klasse: state.login.klasse,
 	geb_dat: state.login.geb_dat,
 	passwort: state.login.passwort,
-	email: state.login.email
+	email: state.login.email,
+	saveData: state.login.saveData
 })
 
-const mapDispatchToProps = { setVorname, setNachname, setKlasse, setGebDat, setPasswort, setEmail }
+const mapDispatchToProps = { setVorname, setNachname, setKlasse, setGebDat, setPasswort, setEmail, setSaveData }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login)
