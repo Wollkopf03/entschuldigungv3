@@ -14,9 +14,7 @@ export class Success extends Component<Props> {
 				</Typography>
 				<Typography variant="subtitle1" textAlign="justify">
 					{this.props.schueler} wurde erfolgreich entschuldigt.<br /><br />
-					Wir haben jedoch gerade ein Problem mit dem Versenden der Bestätigungsemails.
-					Verfalle also nicht in Panik, wenn du keine Email erhalten hast.
-					Das liegt daran, dass du deine Emailadresse falsch geschrieben hast.
+					Bitte kontrolliere dies in deinem Postfach.
 				</Typography>
 			</React.Fragment >
 		)

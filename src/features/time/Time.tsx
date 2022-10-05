@@ -21,33 +21,6 @@ type Props = {
 }
 
 export class Time extends Component<Props> {
-	validate = () => {
-		if (this.props.days === "single")
-			if (this.props.at === "today")
-				return undefined;
-			else if (this.props.at === "another_day")
-				if (isNaN(Date.parse(this.props.date)))
-					return "Kein Datum ausgewählt";
-				else if (new Date(this.props.date) < new Date())
-					return "Bitte ein Datum in der Zukunft auswählen";
-				else
-					return undefined;
-			else
-				return "Keinen Tag ausgewählt";
-		else if (this.props.days === "multiple")
-			if (isNaN(Date.parse(this.props.from)))
-				return "Bitte ein Startdatum auswählen";
-			else if (isNaN(Date.parse(this.props.till)))
-				return "Bitte ein Enddatum auswählen";
-			else if (new Date(this.props.from) < new Date(new Date().getTime() - 24 * 60 * 60 * 1000))
-				return "Das Startdatum muss heute sein oder in der Zukunft liegen";
-			else if (new Date(this.props.till) <= new Date(this.props.from))
-				return "Das Enddatum muss nach dem Startdatum sein";
-			else
-				return undefined;
-		else
-			return "Bitte Anzahl der Tage auswählen";
-	}
 
 	render() {
 		return (

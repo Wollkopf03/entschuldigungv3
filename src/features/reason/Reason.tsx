@@ -14,13 +14,6 @@ type Props = {
 
 export class Reason extends Component<Props> {
 
-	validate = () => {
-		if (this.props.reason === "")
-			return "Bitte Grund angeben";
-		else
-			return undefined;
-	}
-
 	render() {
 		return (
 			<React.Fragment>
