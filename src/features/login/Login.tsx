@@ -22,33 +22,6 @@ type Props = {
 
 export class Login extends Component<Props>  {
 
-	async validate(): Promise<string | undefined> {
-		if (this.props.vorname === "")
-			return "Bitte den Vornamen angeben";
-		else if (this.props.nachname === "")
-			return "Bitte den Nachnamen angeben";
-		else if (this.props.email === "")
-			return "Bitte die Emailadresse angeben";
-		else if (this.props.klasse === "")
-			return "Bitte die Klasse auswählen";
-		else if (this.props.geb_dat === "")
-			return "Bitte das Geburtsdatum angeben";
-		else if (this.props.passwort === "")
-			return "Bitte das Passwort eingeben";
-		var requestOptions = {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify(this.props)
-		};
-		const result: string | undefined = await fetch("https://api.mcs-rbg.de/entschuldigungen/login.php", requestOptions)
-			.then(response => response.json()).then(data => {
-				if ("error" in data)
-					return data.error;
-				else
-					return undefined;
-			});
-	}
-
 	render() {
 		return (
 			<React.Fragment >

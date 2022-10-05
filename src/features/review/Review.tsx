@@ -31,25 +31,6 @@ type Props = {
 
 export class Review extends Component<Props> {
 
-	validate = () => {
-		if (this.props.login.email === "")
-			return "Bitte Emailadresse angeben";
-		else {
-			var requestOptions = {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify(this.props)
-			};
-			fetch("https://api.mcs-rbg.de/entschuldigungen/", requestOptions)
-				.then(response => response.json()).then(data => {
-					if ("error" in data)
-						return data.error;
-					else
-						return undefined;
-				});
-		}
-	}
-
 	render() {
 		return (
 			<React.Fragment>
