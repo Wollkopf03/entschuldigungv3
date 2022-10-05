@@ -22,8 +22,17 @@ export async function validateLogin(props: loginStateType): Promise<string | und
 		.then(response => response.json()).then(data => {
 			if ("error" in data)
 				return data.error;
-			else
+			else {
+				if (props.saveData)
+					localStorage.setItem("mcs_entschuldigung_user", JSON.stringify({
+						vorname: props.vorname,
+						nachname: props.nachname,
+						email: props.email,
+						klasse: props.klasse,
+						geb_dat: props.geb_dat
+					}))
 				return undefined;
+			}
 		});
 
 }
