@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-type initialStateType = {
+export type appStateType = {
 	step: number,
 	error: undefined | string
 }
 
-const initialState: initialStateType = {
+const initialState: appStateType = {
 	step: 0,
 	error: undefined
 }
@@ -26,6 +26,6 @@ const AppSlice = createSlice({
 	}
 });
 
-export const { nextStep, prevStep, setError } = AppSlice.actions
+export const { ...reducers } = AppSlice.actions
 
 export default AppSlice.reducer

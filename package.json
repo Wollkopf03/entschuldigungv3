@@ -1,6 +1,6 @@
 {
   "name": "entschuldigung",
-  "version": "3.3.0",
+  "version": "3.4.0",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.10.0",

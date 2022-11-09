@@ -14,8 +14,7 @@ export class Success extends Component<Props> {
 				</Typography>
 				<Typography variant="subtitle1" textAlign="justify">
 					{this.props.schueler} wurde erfolgreich entschuldigt.
-					Bitte kontrolliere dies in deinem Postfach.
-					Wenn sie kein Feedback mehr senden möchten können sie diesen Tab nun schließen.
+					Sie können diesen Tab nun schließen.
 				</Typography>
 			</React.Fragment >
 		)

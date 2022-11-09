@@ -1,32 +1,15 @@
-import { Divider, Grid, ListItemText, TextField, Typography } from "@mui/material";
-import { ActionCreatorWithPayload } from "@reduxjs/toolkit";
+import { Divider, Grid, ListItemText, Typography } from "@mui/material";
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { RootState } from '../../app/store';
-import { setEmail } from "../login/LoginSlice";
+import { loginStateType } from "../login/LoginSlice";
+import { reasonStateType } from "../reason/ReasonSlice";
+import { timeStateType } from "../time/TimeSlice";
 
 type Props = {
-	login: {
-		vorname: string,
-		nachname: string,
-		klasse: string,
-		geb_dat: string,
-		passwort: string,
-		email: string
-	},
-	time: {
-		days: string,
-		at: string,
-		date: string,
-		classes: [number, number],
-		from: string,
-		till: string
-	},
-	reason: {
-		reason: string,
-		comment: string,
-	}
-	setEmail: ActionCreatorWithPayload<string, string>
+	login: loginStateType,
+	time: timeStateType,
+	reason: reasonStateType
 }
 
 export class Review extends Component<Props> {
@@ -43,9 +26,6 @@ export class Review extends Component<Props> {
 					</Grid>
 					<Grid item xs={12} sm={6}>
 						<ListItemText primary="Nachname" secondary={this.props.login.nachname} />
-					</Grid>
-					<Grid item xs={12} sm={6}>
-						<ListItemText primary="Email" secondary={this.props.login.email} />
 					</Grid>
 					<Grid item xs={12} sm={6}>
 						<ListItemText primary="Klasse" secondary={this.props.login.klasse} />
@@ -97,19 +77,6 @@ export class Review extends Component<Props> {
 					<Grid item xs={2} sm={12}>
 						<Divider orientation="horizontal" flexItem />
 					</Grid>
-					<Grid item xs={12} sm={12}>
-						<TextField
-							required
-							id="email"
-							name="email"
-							label="Email Adresse"
-							fullWidth
-							autoComplete="email"
-							placeholder="max.mustermann@kgs-ronnenberg.eu"
-							onChange={(e) => this.props.setEmail(e.target.value)}
-							defaultValue={this.props.login.email}
-						/>
-					</Grid>
 				</Grid>
 			</React.Fragment >
 		)
@@ -122,6 +89,6 @@ const mapStateToProps = (state: RootState) => ({
 	reason: state.reason
 })
 
-const mapDispatchToProps = { setEmail }
+const mapDispatchToProps = {}
 
 export default connect(mapStateToProps, mapDispatchToProps)(Review)

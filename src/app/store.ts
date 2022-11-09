@@ -1,6 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
 import AppSlice from '../AppSlice';
-import FeedbackSlice from '../features/feedback/FeedbackSlice';
 import LoginSlice from '../features/login/LoginSlice';
 import ReasonSlice from '../features/reason/ReasonSlice';
 import TimeSlice from '../features/time/TimeSlice';
@@ -10,8 +9,7 @@ export const store = configureStore({
 		app: AppSlice,
 		login: LoginSlice,
 		time: TimeSlice,
-		reason: ReasonSlice,
-		feedback: FeedbackSlice
+		reason: ReasonSlice
 	}
 });
 

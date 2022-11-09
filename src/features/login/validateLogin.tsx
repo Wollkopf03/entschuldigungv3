@@ -5,8 +5,6 @@ export async function validateLogin(props: loginStateType): Promise<string | und
 		return "Bitte den Vornamen angeben";
 	else if (props.nachname === "")
 		return "Bitte den Nachnamen angeben";
-	else if (props.email === "")
-		return "Bitte die Emailadresse angeben";
 	else if (props.klasse === "")
 		return "Bitte die Klasse auswählen";
 	else if (props.geb_dat === "")
@@ -27,7 +25,6 @@ export async function validateLogin(props: loginStateType): Promise<string | und
 					localStorage.setItem("mcs_entschuldigung_user", JSON.stringify({
 						vorname: props.vorname,
 						nachname: props.nachname,
-						email: props.email,
 						klasse: props.klasse,
 						geb_dat: props.geb_dat
 					}))

@@ -1,13 +1,9 @@
 import { ThemeProvider } from '@emotion/react';
 import { Alert, AppBar, Box, Button, Container, createTheme, Grid, Paper, Step, StepLabel, Stepper, Typography } from '@mui/material';
-import { ActionCreatorWithPayload } from '@reduxjs/toolkit';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { RootState } from './app/store';
-import { nextStep, prevStep, setError } from "./AppSlice";
-import Feedback from './features/feedback/Feedback';
-import { feedbackStateType } from './features/feedback/FeedbackSlice';
-import { validateFeedback } from './features/feedback/validateFeedback';
+import { appStateType, reducers } from "./AppSlice";
 import Login from './features/login/Login';
 import { loginStateType } from './features/login/LoginSlice';
 import { validateLogin } from './features/login/validateLogin';
@@ -21,16 +17,10 @@ import Time from './features/time/Time';
 import { timeStateType } from './features/time/TimeSlice';
 import { validateTime } from './features/time/validateTime';
 
-type Props = {
-	step: number,
-	error: string | undefined,
-	setError: ActionCreatorWithPayload<string | undefined, string>,
-	nextStep: () => void,
-	prevStep: () => void,
+type Props = appStateType & typeof reducers & {
 	login: loginStateType,
 	time: timeStateType,
-	reason: reasonStateType,
-	feedback: feedbackStateType
+	reason: reasonStateType
 }
 
 class App extends Component<Props> {
@@ -49,16 +39,7 @@ class App extends Component<Props> {
 				return <Review />
 			case 4:
 				return <Success />
-			case 5:
-				return <Feedback />
-			default:
-				return <Typography component="h6" variant="h6" align="center">
-					Vielen Dank für dein Feedback
-				</Typography>
 		}
-	}
-	async undefined() {
-		return undefined;
 	}
 
 	async nextStep() {
@@ -75,12 +56,6 @@ class App extends Component<Props> {
 				break;
 			case 3:
 				error = validateReview({ login: this.props.login, time: this.props.time, reason: this.props.reason });
-				break;
-			case 4:
-				error = this.undefined();
-				break;
-			case 5:
-				error = validateFeedback({ feedback: this.props.feedback, login: this.props.login });
 				break;
 			default:
 				throw new Error("Unknown step");
@@ -124,27 +99,8 @@ class App extends Component<Props> {
 											{this.props.step === this.steps.length - 1 ? "Abschicken" : "Weiter"}
 										</Button>
 									</React.Fragment>
-									: this.props.error === undefined && this.props.step === 4 ?
-										<Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-											<Button
-												variant="contained"
-												onClick={() => this.nextStep()}
-												sx={{ mt: 3, ml: 1 }}
-											>
-												Feedback senden (optional)
-											</Button>
-										</Box>
-										: this.props.error === undefined && this.props.step === 5 ?
-											<Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-												<Button
-													variant="contained"
-													onClick={() => this.nextStep()}
-													sx={{ mt: 3, ml: 1 }}
-												>
-													Feedback senden (optional)
-												</Button>
-											</Box> : this.props.error !== undefined &&
-											<Alert sx={{ mt: 3, width: "100%" }} severity="error">{this.props.error}</Alert>
+									: this.props.error !== undefined &&
+									<Alert sx={{ mt: 3, width: "100%" }} severity="error">{this.props.error}</Alert>
 								}
 							</Box>
 						</React.Fragment>
@@ -184,18 +140,10 @@ class App extends Component<Props> {
 }
 
 const mapStateToProps = (state: RootState) => ({
-	step: state.app.step,
-	error: state.app.error,
-	login: state.login,
-	time: state.time,
-	reason: state.reason,
-	feedback: state.feedback
+	...state.app,
+	...state
 })
 
-const mapDispatchToProps = {
-	nextStep,
-	prevStep,
-	setError
-}
+const mapDispatchToProps = { ...reducers }
 
 export default connect(mapStateToProps, mapDispatchToProps)(App)

@@ -23,6 +23,6 @@ const ReasonSlice = createSlice({
 	}
 });
 
-export const { setReason, setComment } = ReasonSlice.actions
+export const { ...reducers } = ReasonSlice.actions
 
 export default ReasonSlice.reducer

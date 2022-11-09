@@ -1,24 +1,10 @@
 import { Grid, Slider, TextField, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
-import { ActionCreatorWithPayload } from '@reduxjs/toolkit';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { RootState } from '../../app/store';
-import { setAt, setClasses, setDate, setDays, setFrom, setTill } from "./TimeSlice";
+import { reducers, timeStateType } from "./TimeSlice";
 
-type Props = {
-	days: string,
-	at: string,
-	date: string,
-	classes: [number, number],
-	from: string,
-	till: string,
-	setDays: ActionCreatorWithPayload<string, string>,
-	setAt: ActionCreatorWithPayload<string, string>,
-	setDate: ActionCreatorWithPayload<string, string>,
-	setClasses: ActionCreatorWithPayload<[number, number], string>,
-	setFrom: ActionCreatorWithPayload<string, string>,
-	setTill: ActionCreatorWithPayload<string, string>
-}
+type Props = timeStateType & typeof reducers
 
 export class Time extends Component<Props> {
 
@@ -137,22 +123,8 @@ export class Time extends Component<Props> {
 	}
 }
 
-const mapStateToProps = (state: RootState) => ({
-	days: state.time.days,
-	at: state.time.at,
-	date: state.time.date,
-	classes: state.time.classes,
-	from: state.time.from,
-	till: state.time.till,
-})
+const mapStateToProps = (state: RootState) => ({ ...state.time })
 
-const mapDispatchToProps = {
-	setDays,
-	setAt,
-	setDate,
-	setClasses,
-	setFrom,
-	setTill
-}
+const mapDispatchToProps = { ...reducers }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Time)
