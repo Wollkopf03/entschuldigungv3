@@ -43,6 +43,6 @@ const TimeSlice = createSlice({
 	}
 });
 
-export const { setDays, setAt, setDate, setClasses, setFrom, setTill } = TimeSlice.actions
+export const { ...reducers } = TimeSlice.actions
 
 export default TimeSlice.reducer

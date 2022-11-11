@@ -1,26 +1,10 @@
 import { Button, Checkbox, FormControl, FormControlLabel, Grid, InputLabel, MenuItem, OutlinedInput, Select, TextField, Typography } from '@mui/material';
-import { ActionCreatorWithPayload } from '@reduxjs/toolkit';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { RootState } from '../../app/store';
-import { setEmail, setGebDat, setKlasse, setNachname, setPasswort, setVorname, setSaveData } from "./LoginSlice";
+import { RootState } from '../store';
+import { reducers, loginStateType } from "./LoginSlice";
 
-type Props = {
-	vorname: string,
-	nachname: string,
-	klasse: string,
-	geb_dat: string,
-	passwort: string,
-	email: string,
-	saveData: boolean,
-	setEmail: ActionCreatorWithPayload<string, string>,
-	setGebDat: ActionCreatorWithPayload<string, string>,
-	setKlasse: ActionCreatorWithPayload<string, string>,
-	setNachname: ActionCreatorWithPayload<string, string>,
-	setPasswort: ActionCreatorWithPayload<string, string>,
-	setVorname: ActionCreatorWithPayload<string, string>,
-	setSaveData: ActionCreatorWithPayload<boolean, string>
-}
+type Props = loginStateType & typeof reducers
 
 export class Login extends Component<Props>  {
 
@@ -31,7 +15,6 @@ export class Login extends Component<Props>  {
 			const userJSON = JSON.parse(user);
 			this.props.setVorname(userJSON.vorname);
 			this.props.setNachname(userJSON.nachname);
-			this.props.setEmail(userJSON.email);
 			this.props.setKlasse(userJSON.klasse);
 			this.props.setGebDat(userJSON.geb_dat);
 			loggedIn = true;
@@ -66,20 +49,6 @@ export class Login extends Component<Props>  {
 							placeholder="Mustermann"
 							onChange={(e) => this.props.setNachname(e.target.value)}
 							value={this.props.nachname}
-						/>
-					</Grid>
-					<Grid item xs={12} sm={12}>
-						<TextField
-							required
-							id="email"
-							type="email"
-							name="email"
-							label="Email Adresse"
-							fullWidth
-							autoComplete="email"
-							placeholder="max.mustermann@kgs-ronnenberg.eu"
-							onChange={(e) => this.props.setEmail(e.target.value)}
-							value={this.props.email}
 						/>
 					</Grid>
 					<Grid item xs={12} sm={6}>
@@ -137,11 +106,10 @@ export class Login extends Component<Props>  {
 							<Button
 								variant="contained"
 								onClick={() => {
-									localStorage.clear();
+									localStorage.removeItem("mcs_entschuldigung_user");
 									this.props.setSaveData(false);
 									this.props.setVorname("");
 									this.props.setNachname("");
-									this.props.setEmail("");
 									this.props.setKlasse("");
 									this.props.setGebDat("");
 								}} sx={{ mt: 3, ml: 1 }}>
@@ -163,16 +131,43 @@ export class Login extends Component<Props>  {
 	}
 }
 
-const mapStateToProps = (state: RootState) => ({
-	vorname: state.login.vorname,
-	nachname: state.login.nachname,
-	klasse: state.login.klasse,
-	geb_dat: state.login.geb_dat,
-	passwort: state.login.passwort,
-	email: state.login.email,
-	saveData: state.login.saveData
-})
 
-const mapDispatchToProps = { setVorname, setNachname, setKlasse, setGebDat, setPasswort, setEmail, setSaveData }
+export async function validateLogin(props: loginStateType): Promise<string | undefined> {
+	if (props.vorname === "")
+		return "Bitte den Vornamen angeben";
+	else if (props.nachname === "")
+		return "Bitte den Nachnamen angeben";
+	else if (props.klasse === "")
+		return "Bitte die Klasse auswählen";
+	else if (props.geb_dat === "")
+		return "Bitte das Geburtsdatum angeben";
+	else if (props.passwort === "")
+		return "Bitte das Passwort eingeben";
+	var requestOptions = {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(props)
+	};
+	return fetch("https://api.mcs-rbg.de/entschuldigungen/login.php", requestOptions)
+		.then(response => response.json()).then(data => {
+			if ("error" in data)
+				return data.error;
+			else {
+				if (props.saveData)
+					localStorage.setItem("mcs_entschuldigung_user", JSON.stringify({
+						vorname: props.vorname,
+						nachname: props.nachname,
+						klasse: props.klasse,
+						geb_dat: props.geb_dat
+					}))
+				return undefined;
+			}
+		});
+
+}
+
+const mapStateToProps = (state: RootState) => ({ ...state.login })
+
+const mapDispatchToProps = { ...reducers }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login)

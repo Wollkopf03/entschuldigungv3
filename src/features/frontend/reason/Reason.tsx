@@ -1,16 +1,10 @@
 import { Grid, TextField, Typography } from '@mui/material';
-import { ActionCreatorWithPayload } from '@reduxjs/toolkit';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { RootState } from '../../app/store';
-import { setComment, setReason } from "./ReasonSlice";
+import { RootState } from '../store';
+import { reasonStateType, reducers } from "./ReasonSlice";
 
-type Props = {
-	reason: string,
-	comment: string,
-	setReason: ActionCreatorWithPayload<string, string>,
-	setComment: ActionCreatorWithPayload<string, string>
-}
+type Props = reasonStateType & typeof reducers
 
 export class Reason extends Component<Props> {
 
@@ -51,11 +45,15 @@ export class Reason extends Component<Props> {
 	}
 }
 
-const mapStateToProps = (state: RootState) => ({
-	reason: state.reason.reason,
-	comment: state.reason.comment
-})
+export async function validateReason(props: reasonStateType) {
+	if (props.reason === "")
+		return "Bitte Grund angeben";
+	else
+		return undefined;
+}
 
-const mapDispatchToProps = { setReason, setComment }
+const mapStateToProps = (state: RootState) => ({ ...state.reason })
+
+const mapDispatchToProps = { ...reducers }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Reason)

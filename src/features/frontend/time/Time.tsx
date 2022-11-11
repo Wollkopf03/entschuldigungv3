@@ -1,24 +1,10 @@
 import { Grid, Slider, TextField, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
-import { ActionCreatorWithPayload } from '@reduxjs/toolkit';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { RootState } from '../../app/store';
-import { setAt, setClasses, setDate, setDays, setFrom, setTill } from "./TimeSlice";
+import { RootState } from '../store';
+import { reducers, timeStateType } from "./TimeSlice";
 
-type Props = {
-	days: string,
-	at: string,
-	date: string,
-	classes: [number, number],
-	from: string,
-	till: string,
-	setDays: ActionCreatorWithPayload<string, string>,
-	setAt: ActionCreatorWithPayload<string, string>,
-	setDate: ActionCreatorWithPayload<string, string>,
-	setClasses: ActionCreatorWithPayload<[number, number], string>,
-	setFrom: ActionCreatorWithPayload<string, string>,
-	setTill: ActionCreatorWithPayload<string, string>
-}
+type Props = timeStateType & typeof reducers
 
 export class Time extends Component<Props> {
 
@@ -137,22 +123,36 @@ export class Time extends Component<Props> {
 	}
 }
 
-const mapStateToProps = (state: RootState) => ({
-	days: state.time.days,
-	at: state.time.at,
-	date: state.time.date,
-	classes: state.time.classes,
-	from: state.time.from,
-	till: state.time.till,
-})
-
-const mapDispatchToProps = {
-	setDays,
-	setAt,
-	setDate,
-	setClasses,
-	setFrom,
-	setTill
+export async function validateTime(props: timeStateType) {
+	if (props.days === "single")
+		if (props.at === "today")
+			return undefined;
+		else if (props.at === "another_day")
+			if (isNaN(Date.parse(props.date)))
+				return "Kein Datum ausgewählt";
+			else if (new Date(props.date) < new Date())
+				return "Bitte ein Datum in der Zukunft auswählen";
+			else
+				return undefined;
+		else
+			return "Keinen Tag ausgewählt";
+	else if (props.days === "multiple")
+		if (isNaN(Date.parse(props.from)))
+			return "Bitte ein Startdatum auswählen";
+		else if (isNaN(Date.parse(props.till)))
+			return "Bitte ein Enddatum auswählen";
+		else if (new Date(props.from) < new Date(new Date().getTime() - 24 * 60 * 60 * 1000))
+			return "Das Startdatum muss heute sein oder in der Zukunft liegen";
+		else if (new Date(props.till) <= new Date(props.from))
+			return "Das Enddatum muss nach dem Startdatum sein";
+		else
+			return undefined;
+	else
+		return "Bitte Anzahl der Tage auswählen";
 }
+
+const mapStateToProps = (state: RootState) => ({ ...state.time })
+
+const mapDispatchToProps = { ...reducers }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Time)

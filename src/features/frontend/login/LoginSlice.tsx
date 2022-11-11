@@ -6,7 +6,6 @@ export type loginStateType = {
 	klasse: string,
 	geb_dat: string,
 	passwort: string,
-	email: string,
 	saveData: boolean
 }
 const initialState: loginStateType = {
@@ -15,7 +14,6 @@ const initialState: loginStateType = {
 	klasse: "",
 	geb_dat: "",
 	passwort: "",
-	email: "",
 	saveData: false
 }
 
@@ -38,15 +36,12 @@ const LoginSlice = createSlice({
 		setPasswort: (loginState, action: PayloadAction<string>) => {
 			loginState.passwort = action.payload
 		},
-		setEmail: (loginState, action: PayloadAction<string>) => {
-			loginState.email = action.payload
-		},
 		setSaveData: (loginState, action: PayloadAction<boolean>) => {
 			loginState.saveData = action.payload
 		}
 	}
 });
 
-export const { setVorname, setNachname, setKlasse, setGebDat, setPasswort, setEmail, setSaveData } = LoginSlice.actions
+export const { ...reducers } = LoginSlice.actions
 
 export default LoginSlice.reducer
